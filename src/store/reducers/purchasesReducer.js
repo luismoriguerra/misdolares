@@ -15,7 +15,7 @@ export function PurchasesReducer ( state = {}, action) {
             return { ...state , [action.payload.id]: {...action.payload}};
         case PurchasesActionTypes.remove: 
             const newState = {...state };
-            delete newState[action.payload.id];
+            delete newState[action.payload];
             return { ...newState }
         default:
             break;

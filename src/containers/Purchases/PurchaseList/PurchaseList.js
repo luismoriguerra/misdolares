@@ -3,18 +3,50 @@ import { connect } from 'react-redux';
 import { getAll } from '../../../store/reducers/purchasesReducer';
 
 import { Redirect } from "react-router-dom";
+import { Table, Icon, Divider } from 'antd';
 
 import moment from 'moment';
 import './styles.css'
+import { PurchasesActions } from '../../../store/actions/PurchaseActions';
+
 
 export class PurchaseList extends Component {
 
   state = {
     rowSelected: null
   }
+
+  columns = [{
+    title: 'amount',
+    dataIndex: 'amount',
+    key: 'amount',
+  }, {
+    title: 'change',
+    dataIndex: 'change',
+    key: 'change',
+  }, {
+    title: 'date',
+    dataIndex: 'date',
+    key: 'date',
+  }, {
+    title: 'Action',
+    key: 'action',
+    render: (text, item) => (
+      <RowActions 
+        onClickRow={this.onClickRow(item.id)} 
+        onDeleteRow={this.onDeleteRow(item.id)} 
+      />
+    ),
+  }];
+
+
  
   onClickRow = (rowSelected) => () => {
     this.setState({rowSelected});
+  }
+
+  onDeleteRow = (rowSelected) => () => {
+    this.props.actions.remove(rowSelected);
   }
 
   render() {
@@ -24,18 +56,7 @@ export class PurchaseList extends Component {
 
     return (
       <div>
-        <table>
-          <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Cantidad</th>
-            <th>Cambio</th>
-          </tr>
-          </thead>
-          <tbody>
-          { this.props.list.map( item => <TableRow key={item.id} {...item} onClickRow={this.onClickRow(item.id)} />)}
-          </tbody>
-        </table>
+        <Table columns={this.columns} dataSource={this.props.list} />
       </div>
     )
   }
@@ -45,12 +66,26 @@ const mapStateToProps = (state) => ({
   list: getAll(state.purchases)|| []
 })
 
-const mapDispatchToProps = {
-  
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: {
+      remove(id) {  dispatch(PurchasesActions.remove(id)) }
+    }
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PurchaseList)
 
+
+const RowActions = ({ onCLickRow , onDeleteRow }) => {
+  return (
+    <React.Fragment>
+      <Icon type="eye-o" onClick={onCLickRow} />
+      <Divider type="vertical" />
+      <Icon type="delete" onClick={onDeleteRow} />
+    </React.Fragment>
+  )
+}
 
 
 const TableRow = ({id , date, amount, change, onClickRow }) => {
