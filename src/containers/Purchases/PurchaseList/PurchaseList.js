@@ -20,6 +20,7 @@ export class PurchaseList extends Component {
     title: 'amount',
     dataIndex: 'amount',
     key: 'amount',
+    render: (text , { amount }) => `$ ` + amount
   }, {
     title: 'change',
     dataIndex: 'change',
@@ -28,24 +29,20 @@ export class PurchaseList extends Component {
     title: 'date',
     dataIndex: 'date',
     key: 'date',
+    render: (text , { date }) => moment(date).format('DD/MM/YY')
   }, {
     title: 'Action',
     key: 'action',
-    render: (text, item) => (
-      <RowActions 
-        onClickRow={this.onClickRow(item.id)} 
-        onDeleteRow={this.onDeleteRow(item.id)} 
-      />
+    render: (text, {id}) => (
+      <RowActions  id={id} viewRow={this.viewRow}  deleteRow={this.deleteRow} />
     ),
   }];
 
-
- 
-  onClickRow = (rowSelected) => () => {
+  viewRow = (rowSelected) => {
     this.setState({rowSelected});
   }
 
-  onDeleteRow = (rowSelected) => () => {
+  deleteRow = (rowSelected) => {
     this.props.actions.remove(rowSelected);
   }
 
@@ -77,24 +74,21 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(PurchaseList)
 
 
-const RowActions = ({ onCLickRow , onDeleteRow }) => {
+const RowActions = ({ id, viewRow , deleteRow }) => {
+
+  const onView = () => {
+    viewRow(id)
+  }
+
+  const onDeleteRow = () => {
+    deleteRow(id)
+  }
+  
   return (
     <React.Fragment>
-      <Icon type="eye-o" onClick={onCLickRow} />
+      <Icon type="eye-o" onClick={onView} />
       <Divider type="vertical" />
       <Icon type="delete" onClick={onDeleteRow} />
     </React.Fragment>
-  )
-}
-
-
-const TableRow = ({id , date, amount, change, onClickRow }) => {
-  const formatDate = moment(new Date().getTime()).format('DD/MM/YY');
-  return (
-    <tr onClick={onClickRow}>
-      <td>{formatDate}</td>
-      <td>$ {amount}</td>
-      <td>s./ {change}</td>
-    </tr>
   )
 }

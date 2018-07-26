@@ -14,6 +14,7 @@ export class History extends Component {
   render() {
     return (
       <div className="wrapper">
+      
         <h1>Historial de Gastos</h1>
 
         <div className="history-body">
@@ -28,7 +29,7 @@ export class History extends Component {
                 <Icon type="minus-circle-o" style={{ fontSize: 30, color: '#08c' }} />
             </div>
             <div>
-                Totoal : $100
+                Total : $100
             </div>
         </div>
       </div>
